@@ -19,13 +19,10 @@ class CallCenter {
         desks = new queue<string>[num_employee];
         occupied = new bool[num_employee];
 
-        for (int i = 0; i < num_employee; i++) {
-            cout << occupied[i] << " ";
-        }
         cout << endl;
 
         getEmployeeInfo();
-        cout << "Allah" << endl;
+        cout << endl;
     }
 
     void getEmployeeInfo() {
@@ -38,9 +35,24 @@ class CallCenter {
     }
 
     void newCall() {
-        string name;
-        cout << "Enter name of caller : " << endl;
-        cin >> name;
+        vector<int> queue_sizes(num_employee);
+
+        for (int i = 0; i < num_employee; i++) {
+            queue_sizes[i] = desks[i].size();
+        }
+
+        auto min_ele = min_element(queue_sizes.begin(), queue_sizes.end());
+        int min_ele_index = min_ele - queue_sizes.begin();
+        int min_ele_value = *min_ele;
+
+        if (min_ele_value == max_queue_size) {
+            cout<<"Call center operating at maximum capacity.\nPlease call again after some time."<<endl;
+        }else{
+            string name;
+            cout << "Enter name of caller : " << endl;
+            cin >> name;
+            desks[min_ele_index].push(name);
+        }
     }
     void endCall() {
         string name;
@@ -63,7 +75,7 @@ class CallCenter {
                 cout << temp.front() << endl;
                 temp.pop();
                 cout << "In the waiting list: " << endl;
-                while (temp.size() != 0) {
+                while (!temp.empty()) {
                     cout << temp.front() << endl;
                     temp.pop();
                 }
