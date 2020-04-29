@@ -58,9 +58,28 @@ class CallCenter {
         string name;
         cout << "Enter name of the caller to end call : " << endl;
         cin >> name;
-
+        bool nameFound = false;
         for (int i = 0; i < num_employee; i++) {
+            queue<string> toCheck;
+            toCheck = desks[i];
+            queue<string> checked;
+            int len = toCheck.size();
+            while (!toCheck.empty()) {
+                if(toCheck.front().compare(name)==0){
+                    nameFound = true;            
+                }else{
+                    checked.push(toCheck.front());
+                }
+                toCheck.pop();
+            }   
+            desks[i] = checked;  
+            if(nameFound){
+                cout<<"Caller "<<name<<" removed from the queue."<<endl;
+            }else{
+                cout<<"No callers named '"<<name<<"' found."<<endl;
+            }       
         }
+        
     }
     void currentStatus() {
         for (int i = 0; i < num_employee; i++) {
