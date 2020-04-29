@@ -46,8 +46,8 @@ class CallCenter {
         int min_ele_value = *min_ele;
 
         if (min_ele_value == max_queue_size) {
-            cout<<"Call center operating at maximum capacity.\nPlease call again after some time."<<endl;
-        }else{
+            cout << "Call center operating at maximum capacity.\nPlease call again after some time." << endl;
+        } else {
             string name;
             cout << "Enter name of caller : " << endl;
             cin >> name;
@@ -65,21 +65,20 @@ class CallCenter {
             queue<string> checked;
             int len = toCheck.size();
             while (!toCheck.empty()) {
-                if(toCheck.front().compare(name)==0){
-                    nameFound = true;            
-                }else{
+                if (toCheck.front().compare(name) == 0) {
+                    nameFound = true;
+                } else {
                     checked.push(toCheck.front());
                 }
                 toCheck.pop();
-            }   
-            desks[i] = checked;  
-            if(nameFound){
-                cout<<"Caller "<<name<<" removed from the queue."<<endl;
-            }else{
-                cout<<"No callers named '"<<name<<"' found."<<endl;
-            }       
+            }
+            desks[i] = checked;
         }
-        
+        if (nameFound) {
+            cout << "Caller " << name << " removed from the queue." << endl;
+        } else {
+            cout << "No callers named '" << name << "' found." << endl;
+        }
     }
     void currentStatus() {
         for (int i = 0; i < num_employee; i++) {
@@ -93,10 +92,14 @@ class CallCenter {
                 cout << "Currently Attending: ";
                 cout << temp.front() << endl;
                 temp.pop();
-                cout << "In the waiting list: " << endl;
-                while (!temp.empty()) {
-                    cout << temp.front() << endl;
-                    temp.pop();
+                if(!temp.empty()){
+                    cout << "In the waiting list: " << endl;
+                    while (!temp.empty()) {
+                        cout << temp.front() << endl;
+                        temp.pop();
+                    }
+                }else{
+                    cout << "No one in the waiting list." << endl;
                 }
             }
             cout << endl;
@@ -105,8 +108,15 @@ class CallCenter {
 };
 
 int main() {
-    CallCenter center(4, 3);
+    int num_employee, max_queue_size;
+    cout << "Enter number of employees: ";
+    cin >> num_employee;
+    cout << endl;
+    cout << "Enter maximum size of queue: ";
+    cin >> max_queue_size;
+    cout << endl;
 
+    CallCenter center(num_employee, max_queue_size);
     ofstream logfile;
     logfile.open("log.txt");
 
