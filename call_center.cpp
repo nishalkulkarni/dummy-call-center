@@ -2,11 +2,133 @@
 
 using namespace std;
 
+// Class for queue
+template <typename T>
+class CallQueue {
+    T* arr;        // array to store queue elements
+    int capacity;  // maximum capacity of the queue
+    int front;     // front points to front element in the queue (if any)
+    int rear;      // rear points to last element in the queue
+    int count;     // current size of the queue
+
+    public:
+    CallQueue();  // constructor
+    CallQueue(const CallQueue& cp);
+    ~CallQueue();  // destructor
+    void setSize(int size);
+
+    void dequeue();
+    void enqueue(T x);
+    void deepCopy(const CallQueue& cp);
+    T peek();
+    int size();
+    bool empty();
+    bool isFull();
+};
+
+// Constructor to initialize queue
+template <typename T>
+CallQueue<T>::CallQueue() {
+    front = 0;
+    rear = -1;
+    count = 0;
+}
+
+template <typename T>
+void CallQueue<T>::setSize(int size) {
+    arr = new T[size];
+    capacity = size;
+}
+
+template <typename T>
+CallQueue<T>::CallQueue(const CallQueue& cp) {
+    arr = new T[cp.capacity];
+    capacity = cp.capacity;
+    for (int i = 0; i < cp.capacity; i++) {
+        this->arr[i] = cp.arr[i];
+    }
+    // copy(begin(cp.arr),end(cp.arr),begin(arr));
+    this->front = cp.front;
+    this->rear = cp.rear;
+    this->count = cp.count;
+}
+
+// Destructor to free memory allocated to the queue
+template <typename T>
+CallQueue<T>::~CallQueue() {
+    delete arr;
+}
+// 2 2 1 2 1 a 1 b 1 c 1 d 1
+
+template <typename T>
+void CallQueue<T>::deepCopy(const CallQueue& cp) {
+    // delete arr;
+    // arr = new T[cp.capacity];
+    capacity = cp.capacity;
+    for (int i = 0; i < cp.capacity; i++) {
+        this->arr[i] = cp.arr[i];
+    }
+    this->front = cp.front;
+    this->rear = cp.rear;
+    this->count = cp.count;
+}
+
+// Utility function to remove front element from the queue
+template <typename T>
+void CallQueue<T>::dequeue() {
+    // check for queue underflow
+    if (empty()) {
+        cout << "UnderFlow\nProgram Terminated\n";
+        exit(EXIT_FAILURE);
+    }
+    front = (front + 1) % capacity;
+    count--;
+}
+
+// Utility function to add an item to the queue
+template <typename T>
+void CallQueue<T>::enqueue(T item) {
+    // check for queue overflow
+    if (isFull()) {
+        cout << "OverFlow\nProgram Terminated\n";
+        exit(EXIT_FAILURE);
+    }
+    rear = (rear + 1) % capacity;
+    arr[rear] = item;
+    count++;
+}
+
+// Utility function to return front element in the queue
+template <typename T>
+T CallQueue<T>::peek() {
+    if (empty()) {
+        cout << "UnderFlow\nProgram Terminated\n";
+        exit(EXIT_FAILURE);
+    }
+    return arr[front];
+}
+
+// Utility function to return the size of the queue
+template <typename T>
+int CallQueue<T>::size() {
+    return count;
+}
+
+// Utility function to check if the queue is empty or not
+template <typename T>
+bool CallQueue<T>::empty() {
+    return (size() == 0);
+}
+
+// Utility function to check if the queue is full or not
+template <typename T>
+bool CallQueue<T>::isFull() {
+    return (size() == capacity);
+}
+
 class CallCenter {
     private:
-    queue<string> waiting_list;
-    queue<string>* desks;
-    bool* occupied;
+    CallQueue<string>* desks;
     vector<string> employees;
     int num_employee;
     int max_queue_size;
@@ -16,8 +138,11 @@ class CallCenter {
         this->num_employee = num_employee;
         this->max_queue_size = max_queue_size;
 
-        desks = new queue<string>[num_employee];
-        occupied = new bool[num_employee];
+        desks = new CallQueue<string>[num_employee];
+
+        for (int i = 0; i < num_employee; i++) {
+            desks[i].setSize(max_queue_size);
+        }
 
         cout << endl;
 
@@ -51,7 +176,7 @@ class CallCenter {
             string name;
             cout << "Enter name of caller : " << endl;
             cin >> name;
-            desks[min_ele_index].push(name);
+            desks[min_ele_index].enqueue(name);
         }
     }
     void endCall() {
@@ -59,20 +184,23 @@ class CallCenter {
         cout << "Enter name of the caller to end call : " << endl;
         cin >> name;
         bool nameFound = false;
+        CallQueue<string>* toCheck;
+        CallQueue<string>* checked;
         for (int i = 0; i < num_employee; i++) {
-            queue<string> toCheck;
-            toCheck = desks[i];
-            queue<string> checked;
-            int len = toCheck.size();
-            while (!toCheck.empty()) {
-                if (toCheck.front().compare(name) == 0) {
+            toCheck = new CallQueue<string>(desks[i]);
+            checked = new CallQueue<string>();
+            checked->setSize(max_queue_size);
+            while (!toCheck->empty()) {
+                if (toCheck->peek().compare(name) == 0) {
                     nameFound = true;
                 } else {
-                    checked.push(toCheck.front());
+                    checked->enqueue(toCheck->peek());
                 }
-                toCheck.pop();
+                toCheck->dequeue();
             }
-            desks[i] = checked;
+            cout << "checked size - " << checked->size() << endl;
+            desks[i].deepCopy(*checked);
+            // 3 3 1 2 3 1 a 1 b 1 c 1 d 1 e 1 f 1 g
         }
         if (nameFound) {
             cout << "Caller " << name << " removed from the queue." << endl;
@@ -81,24 +209,24 @@ class CallCenter {
         }
     }
     void currentStatus() {
+        CallQueue<string>* temp;
         for (int i = 0; i < num_employee; i++) {
             cout << "\nDesk #" << i + 1 << " attended by " << employees[i] << endl;
             if (desks[i].size() == 0) {
                 cout << "Status: Free" << endl;
             } else {
                 cout << "Status: Busy" << endl;
-                queue<string> temp;
-                temp = desks[i];
+                temp = new CallQueue<string>(desks[i]);
                 cout << "Currently Attending: ";
-                cout << temp.front() << endl;
-                temp.pop();
-                if(!temp.empty()){
+                cout << temp->peek() << endl;
+                temp->dequeue();
+                if (!temp->empty()) {
                     cout << "In the waiting list: " << endl;
-                    while (!temp.empty()) {
-                        cout << temp.front() << endl;
-                        temp.pop();
+                    while (!temp->empty()) {
+                        cout << temp->peek() << endl;
+                        temp->dequeue();
                     }
-                }else{
+                } else {
                     cout << "No one in the waiting list." << endl;
                 }
             }
