@@ -1,1 +1,5 @@
-Writing this to a file.
+Call center opened on - Thu Apr 30 11:25:42 2020
+
+
+Call center shutdown on - Thu Apr 30 11:30:46 2020
+

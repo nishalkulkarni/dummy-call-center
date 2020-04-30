@@ -12,9 +12,9 @@ class CallQueue {
     int count;     // current size of the queue
 
     public:
-    CallQueue();  // constructor
-    CallQueue(const CallQueue& cp);
-    ~CallQueue();  // destructor
+    CallQueue();                     // constructor
+    CallQueue(const CallQueue& cp);  // copy constructor
+    ~CallQueue();                    // destructor
     void setSize(int size);
 
     void dequeue();
@@ -58,7 +58,6 @@ template <typename T>
 CallQueue<T>::~CallQueue() {
     delete arr;
 }
-// 2 2 1 2 1 a 1 b 1 c 1 d 1
 
 template <typename T>
 void CallQueue<T>::deepCopy(const CallQueue& cp) {
@@ -159,7 +158,15 @@ class CallCenter {
         }
     }
 
-    void newCall() {
+    void displayEmployeeInfo() {
+        cout << "The names of the employees along with their I'd number's are: " << endl;
+        for (int i = 0; i < num_employee; i++) {
+            cout<<"#"<<i+1<<" "<<employees[i]<<endl;
+        }
+        cout<<endl;
+    }
+
+    void newCall(ofstream& logfile) {
         vector<int> queue_sizes(num_employee);
 
         for (int i = 0; i < num_employee; i++) {
@@ -171,15 +178,21 @@ class CallCenter {
         int min_ele_value = *min_ele;
 
         if (min_ele_value == max_queue_size) {
-            cout << "Call center operating at maximum capacity.\nPlease call again after some time." << endl;
+            cout << "\nCall center operating at maximum capacity.\nPlease call again after some time.\n" << endl;
+            logfile << "Incoming call disconnected as maximum capacity reached" <<endl;
         } else {
             string name;
             cout << "Enter name of caller : " << endl;
             cin >> name;
             desks[min_ele_index].enqueue(name);
+
+            time_t t = time(0);
+            char* st = ctime(&t);
+            logfile << "Caller "<< name << " entered "<<employees[min_ele_index]
+                    <<"'s call queue at - "<<st<<endl;
         }
     }
-    void endCall() {
+    void endCall(ofstream& logfile) {
         string name;
         cout << "Enter name of the caller to end call : " << endl;
         cin >> name;
@@ -200,12 +213,15 @@ class CallCenter {
             }
             cout << "checked size - " << checked->size() << endl;
             desks[i].deepCopy(*checked);
-            // 3 3 1 2 3 1 a 1 b 1 c 1 d 1 e 1 f 1 g
         }
         if (nameFound) {
-            cout << "Caller " << name << " removed from the queue." << endl;
+            cout << "\nCaller " << name << " removed from the queue." << endl;
+            
+            time_t t = time(0);
+            char* st = ctime(&t);
+            logfile << "Caller "<<name<<" ended the call at - "<<st<<endl;
         } else {
-            cout << "No callers named '" << name << "' found." << endl;
+            cout << "\nNo callers named '" << name << "' found." << endl;
         }
     }
     void currentStatus() {
@@ -245,8 +261,15 @@ int main() {
     cout << endl;
 
     CallCenter center(num_employee, max_queue_size);
+
     ofstream logfile;
     logfile.open("log.txt");
+
+    time_t t = time(0);
+    char* st = ctime(&t);
+    logfile << "Call center opened on - " << st<<endl;
+
+    center.displayEmployeeInfo();
 
     int choice = 0;
     while (choice != 4) {
@@ -260,18 +283,20 @@ int main() {
 
         switch (choice) {
             case 1:
-                center.newCall();
+                center.newCall(logfile);
                 break;
             case 2:
-                center.endCall();
+                center.endCall(logfile);
                 break;
             case 3:
                 center.currentStatus();
                 break;
             case 4:
-                logfile << "Writing this to a file.\n";
+                t = time(0);
+                st = ctime(&t);
+                logfile << "\nCall center shutdown on - " << st<<endl;
                 logfile.close();
-                return 0;
+                cout<<"\nCall center shutdown successfully.\n"<<endl;
                 break;
             default:
                 cout << "Invalid Choice. Try again." << endl;
@@ -281,3 +306,6 @@ int main() {
 
     return 0;
 }
+
+// 3 3 1 2 3 1 a 1 b 1 c 1 d 1 e 1 f 1 g
+// 2 2 1 2 1 a 1 b 1 c 1 d 1
