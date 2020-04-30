@@ -161,9 +161,9 @@ class CallCenter {
     void displayEmployeeInfo() {
         cout << "The names of the employees along with their I'd number's are: " << endl;
         for (int i = 0; i < num_employee; i++) {
-            cout<<"#"<<i+1<<" "<<employees[i]<<endl;
+            cout << "#" << i + 1 << " " << employees[i] << endl;
         }
-        cout<<endl;
+        cout << endl;
     }
 
     void newCall(ofstream& logfile) {
@@ -178,8 +178,9 @@ class CallCenter {
         int min_ele_value = *min_ele;
 
         if (min_ele_value == max_queue_size) {
-            cout << "\nCall center operating at maximum capacity.\nPlease call again after some time.\n" << endl;
-            logfile << "Incoming call disconnected as maximum capacity reached" <<endl;
+            cout << "\nCall center operating at maximum capacity.\nPlease call again after some time.\n"
+                 << endl;
+            logfile << "Incoming call disconnected as maximum capacity reached\n" << endl;
         } else {
             string name;
             cout << "Enter name of caller : " << endl;
@@ -188,8 +189,8 @@ class CallCenter {
 
             time_t t = time(0);
             char* st = ctime(&t);
-            logfile << "Caller "<< name << " entered "<<employees[min_ele_index]
-                    <<"'s call queue at - "<<st<<endl;
+            logfile << "Caller " << name << " entered " << employees[min_ele_index]
+                    << "'s call queue at - " << st << endl;
         }
     }
     void endCall(ofstream& logfile) {
@@ -216,10 +217,10 @@ class CallCenter {
         }
         if (nameFound) {
             cout << "\nCaller " << name << " removed from the queue." << endl;
-            
+
             time_t t = time(0);
             char* st = ctime(&t);
-            logfile << "Caller "<<name<<" ended the call at - "<<st<<endl;
+            logfile << "Caller " << name << " ended the call at - " << st << endl;
         } else {
             cout << "\nNo callers named '" << name << "' found." << endl;
         }
@@ -251,6 +252,37 @@ class CallCenter {
     }
 };
 
+void nameSearch() {
+    ifstream stream;
+    stream.open("log.txt");
+    string line, name;
+    cout << "Enter name of the employee - ";
+    cin >> name;
+    cout << endl;
+    int count = 0;
+    while (getline(stream, line)) {
+        if (line.find(name) != 18446744073709551615UL) {
+            cout << line << endl;
+            count++;
+        }
+    }
+    cout<<endl;
+    if (count == 0){
+        cout << name << " not found." << endl;
+    }
+    stream.close();
+}
+
+void displayLog() {
+    ifstream stream;
+    stream.open("log.txt");
+    string line;
+    while (getline(stream, line)) {
+        cout << line << endl;
+    }
+    stream.close();
+}
+
 int main() {
     int num_employee, max_queue_size;
     cout << "Enter number of employees: ";
@@ -267,7 +299,7 @@ int main() {
 
     time_t t = time(0);
     char* st = ctime(&t);
-    logfile << "Call center opened on - " << st<<endl;
+    logfile << "Call center opened on - " << st << endl;
 
     center.displayEmployeeInfo();
 
@@ -294,9 +326,39 @@ int main() {
             case 4:
                 t = time(0);
                 st = ctime(&t);
-                logfile << "\nCall center shutdown on - " << st<<endl;
+                logfile << "Call center shutdown on - " << st << endl;
                 logfile.close();
-                cout<<"\nCall center shutdown successfully.\n"<<endl;
+                cout << "\nCall center shutdown successfully.\n"
+                     << endl;
+                break;
+            default:
+                cout << "Invalid Choice. Try again." << endl;
+                break;
+        }
+    }
+
+    cout << "Entering administration mode..." << endl;
+    choice = 0;
+    while (choice != 3) {
+        cout << "Do you want to: " << endl;
+        cout << "1. Display entire log file" << endl;
+        cout << "2. Search for work done by particular employee" << endl;
+        cout << "3. Exit Admin mode." << endl;
+
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << endl;
+                displayLog();
+                cout << endl;
+                break;
+            case 2:
+                nameSearch();
+                break;
+            case 3:
+                cout << "Exiting program." << endl;
+                return 0;
                 break;
             default:
                 cout << "Invalid Choice. Try again." << endl;

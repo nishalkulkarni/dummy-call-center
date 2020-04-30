@@ -1,5 +1,16 @@
-Call center opened on - Thu Apr 30 11:25:42 2020
+Call center opened on - Thu Apr 30 12:14:23 2020
 
+Caller Ish entered Nishal's call queue at - Thu Apr 30 12:14:32 2020
 
-Call center shutdown on - Thu Apr 30 11:30:46 2020
+Caller Mayank entered Adi's call queue at - Thu Apr 30 12:14:37 2020
+
+Caller Vibhu entered Nishal's call queue at - Thu Apr 30 12:14:47 2020
+
+Caller Swayam entered Adi's call queue at - Thu Apr 30 12:15:07 2020
+
+Incoming call disconnected as maximum capacity reached
+
+Caller Ish ended the call at - Thu Apr 30 12:15:37 2020
+
+Call center shutdown on - Thu Apr 30 12:16:26 2020
 
