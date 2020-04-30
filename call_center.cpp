@@ -61,8 +61,6 @@ CallQueue<T>::~CallQueue() {
 
 template <typename T>
 void CallQueue<T>::deepCopy(const CallQueue& cp) {
-    // delete arr;
-    // arr = new T[cp.capacity];
     capacity = cp.capacity;
     for (int i = 0; i < cp.capacity; i++) {
         this->arr[i] = cp.arr[i];
@@ -180,13 +178,16 @@ class CallCenter {
         if (min_ele_value == max_queue_size) {
             cout << "\nCall center operating at maximum capacity.\nPlease call again after some time.\n"
                  << endl;
-            logfile << "Incoming call disconnected as maximum capacity reached\n" << endl;
+            // Adding the max capacity reached status to the log file
+            logfile << "Incoming call disconnected as maximum capacity reached\n"
+                    << endl;
         } else {
             string name;
             cout << "Enter name of caller : " << endl;
             cin >> name;
             desks[min_ele_index].enqueue(name);
-
+            // Adding the new call status to the log file
+            // getting current time and appending to log.txt
             time_t t = time(0);
             char* st = ctime(&t);
             logfile << "Caller " << name << " entered " << employees[min_ele_index]
@@ -217,7 +218,8 @@ class CallCenter {
         }
         if (nameFound) {
             cout << "\nCaller " << name << " removed from the queue." << endl;
-
+            // Adding the end call status to the log file
+            // getting current time and appending to log.txt
             time_t t = time(0);
             char* st = ctime(&t);
             logfile << "Caller " << name << " ended the call at - " << st << endl;
@@ -252,31 +254,38 @@ class CallCenter {
     }
 };
 
+// Function to search for a particular word in file
 void nameSearch() {
     ifstream stream;
     stream.open("log.txt");
     string line, name;
+    // get name to be searched
     cout << "Enter name of the employee - ";
     cin >> name;
     cout << endl;
+    // go through every line in file
     int count = 0;
     while (getline(stream, line)) {
+        // if match found we print out the entire line
         if (line.find(name) != 18446744073709551615UL) {
             cout << line << endl;
             count++;
         }
     }
-    cout<<endl;
-    if (count == 0){
+    cout << endl;
+    // if no match is found we print the name not found
+    if (count == 0) {
         cout << name << " not found." << endl;
     }
     stream.close();
 }
 
+// Function to print out the entire log file
 void displayLog() {
     ifstream stream;
     stream.open("log.txt");
     string line;
+    // print the file line by line
     while (getline(stream, line)) {
         cout << line << endl;
     }
@@ -294,9 +303,11 @@ int main() {
 
     CallCenter center(num_employee, max_queue_size);
 
+    // opening log.txt file for writing
     ofstream logfile;
     logfile.open("log.txt");
 
+    // getting current time and appending to log.txt
     time_t t = time(0);
     char* st = ctime(&t);
     logfile << "Call center opened on - " << st << endl;
@@ -365,7 +376,6 @@ int main() {
                 break;
         }
     }
-
     return 0;
 }
 
